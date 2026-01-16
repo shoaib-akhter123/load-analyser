@@ -1,0 +1,102 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Distribution / packaging
+.Python
+*.pyc
+*.pyo
+*.pyd
+.Python
+*$py.class
+*.so
+.PyInstaller/
+build/
+dist/
+sdist/
+
+# Environment
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+
+# Runtime
+runtime/
+.hypothesis/
+
+# Coverage
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.gcov
+*.lcov
+*.profraw
+
+# Documentation
+docs/_build/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# React build artifacts
+/build/
+/dist/
+/coverage/
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Production
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+.pytest_cache/
+.covers/
+
+# React specific
+react-app/node_modules/
+react-app/build/
+react-app/dist/
+
+# Python virtual environments
+venv/
+env/
+ENV/
+.venv/
+.env/

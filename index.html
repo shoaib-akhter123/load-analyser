@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Home Load Analyzer</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            backdropBlur: {
+              'xs': '2px',
+            }
+          }
+        }
+      }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <style type="text/tailwindcss">
+      @layer base {
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        }
+      }
+    </style>
+    <style>
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden;
+      }
+
+      #root {
+        min-height: 100vh;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      /* Custom scrollbar for webkit browsers */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+      }
+
+      /* Animation keyframes */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideInLeft {
+        from {
+          transform: translateX(-50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideInRight {
+        from {
+          transform: translateX(50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      .fade-in {
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      .slide-in-left {
+        animation: slideInLeft 0.5s ease-out;
+      }
+
+      .slide-in-right {
+        animation: slideInRight 0.5s ease-out;
+      }
+    </style>
+</head>
+<body class="bg-gray-900 m-0 p-0">
+    <div id="root" class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
+        <div class="container mx-auto px-4 py-8">
+            <!-- Header -->
+            <div id="header-animation-target" class="text-center mb-12">
+                <h1 class="text-5xl font-bold text-white mb-4 flex items-center justify-center gap-3">
+                    <i class="fas fa-bolt text-yellow-400 text-4xl"></i>
+                    Professional Home Load Analyzer
+                </h1>
+                <p class="text-xl text-blue-200">
+                    Advanced Energy Consumption Analysis & Management System
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Left Column - Input and List -->
+                <div class="space-y-8">
+                    <!-- Input Section -->
+                    <div id="input-section-animation-target" class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 shadow-2xl">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                            <i class="fas fa-plug text-yellow-400"></i>
+                            Add New Appliance
+                        </h2>
+
+                        <form id="appliance-form" class="space-y-6">
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-2 text-sm font-semibold text-blue-200">
+                                        <i class="fas fa-tag text-yellow-400"></i>
+                                        Appliance Name
+                                    </label>
+                                    <input
+                                        id="appliance-name"
+                                        type="text"
+                                        placeholder="e.g., Energy Efficient Refrigerator"
+                                        class="w-full px-4 py-3 rounded-xl border-2 border-blue-200 focus:border-yellow-400 focus:outline-none transition-all duration-200 bg-white/90 text-gray-800"
+                                        required
+                                    />
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-2 text-sm font-semibold text-blue-200">
+                                        <i class="fas fa-battery-full text-yellow-400"></i>
+                                        Power Rating (Watts)
+                                    </label>
+                                    <input
+                                        id="power-rating"
+                                        type="number"
+                                        placeholder="e.g., 150"
+                                        min="1"
+                                        step="any"
+                                        class="w-full px-4 py-3 rounded-xl border-2 border-blue-200 focus:border-yellow-400 focus:outline-none transition-all duration-200 bg-white/90 text-gray-800"
+                                        required
+                                    />
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-2 text-sm font-semibold text-blue-200">
+                                        <i class="fas fa-layer-group text-yellow-400"></i>
+                                        Quantity
+                                    </label>
+                                    <input
+                                        id="quantity"
+                                        type="number"
+                                        placeholder="e.g., 1"
+                                        min="1"
+                                        step="any"
+                                        class="w-full px-4 py-3 rounded-xl border-2 border-blue-200 focus:border-yellow-400 focus:outline-none transition-all duration-200 bg-white/90 text-gray-800"
+                                        required
+                                    />
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-2 text-sm font-semibold text-blue-200">
+                                        <i class="fas fa-clock text-yellow-400"></i>
+                                        Daily Usage (Hours)
+                                    </label>
+                                    <input
+                                        id="daily-usage"
+                                        type="number"
+                                        placeholder="e.g., 24"
+                                        min="0.1"
+                                        max="24"
+                                        step="any"
+                                        class="w-full px-4 py-3 rounded-xl border-2 border-blue-200 focus:border-yellow-400 focus:outline-none transition-all duration-200 bg-white/90 text-gray-800"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <button
+                                type="submit"
+                                class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg"
+                            >
+                                <i class="fas fa-plus-circle"></i>
+                                Add Appliance
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Appliances List -->
+                    <div id="list-section-animation-target" class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 shadow-2xl">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                                <i class="fas fa-list-check text-green-400"></i>
+                                Energy Load Inventory
+                            </h2>
+                            <div class="flex gap-3">
+                                <button
+                                    id="finish-analyze"
+                                    class="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-200 flex items-center gap-2 shadow-lg"
+                                >
+                                    <i class="fas fa-chart-line"></i>
+                                    Analyze
+                                </button>
+                                <button
+                                    id="clear-all"
+                                    class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-200 flex items-center gap-2 shadow-lg"
+                                >
+                                    <i class="fas fa-trash-alt"></i>
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-white">
+                                <thead>
+                                    <tr class="border-b border-white/20">
+                                        <th class="text-left py-3 px-4">Appliance</th>
+                                        <th class="text-left py-3 px-4">Power (W)</th>
+                                        <th class="text-left py-3 px-4">Qty</th>
+                                        <th class="text-left py-3 px-4">Hours</th>
+                                        <th class="text-left py-3 px-4">Energy (kWh)</th>
+                                        <th class="text-left py-3 px-4">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="appliances-body">
+                                    <!-- Appliances will be added here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div id="no-appliances-placeholder" class="text-center py-12 text-blue-200">
+                            <i class="fas fa-list-check text-4xl mb-4"></i>
+                            <p>No appliances added yet</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Results and Chart -->
+                <div class="space-y-8">
+                    <!-- Results Section -->
+                    <div id="results-section-animation-target" class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 shadow-2xl">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                            <i class="fas fa-chart-bar text-purple-400"></i>
+                            Energy Analysis Dashboard
+                        </h2>
+
+                        <div id="summary-results">
+                            <div class="text-center py-12 text-blue-200">
+                                <i class="fas fa-network-wired text-4xl mb-4"></i>
+                                <p>Add appliances and click "Analyze" to see comprehensive energy insights</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chart Section -->
+                    <div id="chart-section-animation-target" class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 shadow-2xl">
+                        <h3 class="text-xl font-bold text-white mb-6">Energy Consumption Overview</h3>
+                        <div class="h-80">
+                            <canvas id="energy-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
