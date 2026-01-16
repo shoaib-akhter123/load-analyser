@@ -12,7 +12,28 @@ document.addEventListener('DOMContentLoaded', function() {
     if (nameInput) {
         nameInput.focus();
     }
+
+    // Add touch support for mobile devices
+    addTouchSupport();
 });
+
+function addTouchSupport() {
+    // Add touch-friendly features for mobile devices
+    document.body.addEventListener('touchstart', function() {}, { passive: true });
+
+    // Prevent zoom on mobile devices
+    document.addEventListener('gesturestart', function(e) {
+        e.preventDefault();
+    });
+
+    document.addEventListener('gesturechange', function(e) {
+        e.preventDefault();
+    });
+
+    document.addEventListener('gestureend', function(e) {
+        e.preventDefault();
+    });
+}
 
 function initializeAnimations() {
     // Simple fade-in animation for main sections
@@ -86,6 +107,18 @@ function initializeEventListeners() {
     const clearBtn = document.getElementById('clear-all');
     if (clearBtn) {
         clearBtn.addEventListener('click', clearAll);
+    }
+
+    // Add resize listener for responsive adjustments
+    window.addEventListener('resize', handleResize);
+}
+
+function handleResize() {
+    // Recalculate chart dimensions on resize
+    if (chart && appliances.length > 0) {
+        setTimeout(() => {
+            chart.resize();
+        }, 100);
     }
 }
 
@@ -179,7 +212,7 @@ function showNotification(message, type = 'info') {
 
     // Create notification element
     const notification = document.createElement('div');
-    notification.className = `notification fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 max-w-md ${
+    notification.className = `notification fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 max-w-xs sm:max-w-md ${
         type === 'error' ? 'bg-red-500 text-white' :
         type === 'success' ? 'bg-green-500 text-white' :
         'bg-blue-500 text-white'
@@ -188,6 +221,8 @@ function showNotification(message, type = 'info') {
     notification.style.opacity = '0';
     notification.style.transform = 'translateX(100px)';
     notification.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    notification.style.fontSize = window.innerWidth < 480 ? '0.75rem' : '0.875rem';
+    notification.style.padding = window.innerWidth < 480 ? '0.75rem' : '1rem';
 
     document.body.appendChild(notification);
 
@@ -235,7 +270,21 @@ function updateAppliancesTable() {
             row.style.opacity = '0';
             row.style.transform = 'translateX(-20px)';
 
-            row.innerHTML = `
+            // Responsive table cells based on screen size
+            const isSmallScreen = window.innerWidth < 768;
+
+            row.innerHTML = isSmallScreen ? `
+                <td class="py-2 px-2 text-xs">${appliance.name.substring(0, 10)}${appliance.name.length > 10 ? '...' : ''}</td>
+                <td class="py-2 px-2 text-xs">${appliance.power}</td>
+                <td class="py-2 px-2 text-xs">${appliance.quantity}</td>
+                <td class="py-2 px-2 text-xs">${appliance.hours}</td>
+                <td class="py-2 px-2 font-bold text-yellow-400 text-xs">${appliance.energy.toFixed(2)}</td>
+                <td class="py-2 px-2">
+                    <button class="delete-btn bg-red-500 hover:bg-red-600 text-white p-1 rounded-lg transition-colors duration-200 text-xs" onclick="deleteAppliance(${appliance.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            ` : `
                 <td class="py-3 px-4">${appliance.name}</td>
                 <td class="py-3 px-4">${appliance.power}</td>
                 <td class="py-3 px-4">${appliance.quantity}</td>
@@ -284,7 +333,7 @@ function analyzeData() {
     // Show loading effect
     const summaryDiv = document.getElementById('summary-results');
     if (summaryDiv) {
-        summaryDiv.innerHTML = '<div class="text-center py-12 text-blue-200"><p class="text-lg">Analyzing data...</p><div class="mt-4"><i class="fas fa-spinner fa-spin text-2xl"></i></div></div>';
+        summaryDiv.innerHTML = '<div class="text-center py-8 sm:py-12 text-blue-200"><p class="text-sm sm:text-lg">Analyzing data...</p><div class="mt-2 sm:mt-4"><i class="fas fa-spinner fa-spin text-xl sm:text-2xl"></i></div></div>';
     }
 
     // Delay for animation
@@ -301,29 +350,32 @@ function updateSummary(totalEnergy, maxEnergyAppliance, minEnergyAppliance, avgE
     const summaryDiv = document.getElementById('summary-results');
 
     if (summaryDiv) {
+        // Responsive layout based on screen size
+        const isSmallScreen = window.innerWidth < 640;
+
         summaryDiv.innerHTML = `
-            <div class="space-y-4 animate-fadeIn">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-gradient-to-r from-blue-500/20 to-blue-600/20 p-4 rounded-xl border border-blue-400/30 animate-slideInLeft">
-                        <h3 class="text-blue-200 font-semibold mb-1">Total Energy</h3>
-                        <p class="text-2xl font-bold text-white">${totalEnergy.toFixed(2)} kWh</p>
+            <div class="space-y-4">
+                <div class="grid grid-cols-1 ${isSmallScreen ? 'gap-2' : 'md:grid-cols-2 gap-4'}">
+                    <div class="bg-gradient-to-r from-blue-500/20 to-blue-600/20 p-3 sm:p-4 rounded-xl border border-blue-400/30">
+                        <h3 class="text-blue-200 font-semibold text-xs sm:text-sm mb-1">Total Energy</h3>
+                        <p class="text-xl sm:text-2xl font-bold text-white">${totalEnergy.toFixed(2)} kWh</p>
                     </div>
-                    <div class="bg-gradient-to-r from-green-500/20 to-green-600/20 p-4 rounded-xl border border-green-400/30 animate-slideInRight">
-                        <h3 class="text-green-200 font-semibold mb-1">Avg Energy</h3>
-                        <p class="text-2xl font-bold text-white">${avgEnergy.toFixed(2)} kWh</p>
+                    <div class="bg-gradient-to-r from-green-500/20 to-green-600/20 p-3 sm:p-4 rounded-xl border border-green-400/30">
+                        <h3 class="text-green-200 font-semibold text-xs sm:text-sm mb-1">Avg Energy</h3>
+                        <p class="text-xl sm:text-2xl font-bold text-white">${avgEnergy.toFixed(2)} kWh</p>
                     </div>
                 </div>
 
-                <div class="bg-gradient-to-r from-red-500/20 to-red-600/20 p-4 rounded-xl border border-red-400/30 animate-slideInUp">
-                    <h3 class="text-red-200 font-semibold mb-1">Highest Consumer</h3>
-                    <p class="text-lg font-bold text-white">${maxEnergyAppliance.name}</p>
-                    <p class="text-red-300">${maxEnergyAppliance.energy.toFixed(2)} kWh</p>
+                <div class="bg-gradient-to-r from-red-500/20 to-red-600/20 p-3 sm:p-4 rounded-xl border border-red-400/30">
+                    <h3 class="text-red-200 font-semibold text-xs sm:text-sm mb-1">Highest Consumer</h3>
+                    <p class="text-base sm:text-lg font-bold text-white">${maxEnergyAppliance.name}</p>
+                    <p class="text-red-300 text-xs sm:text-sm">${maxEnergyAppliance.energy.toFixed(2)} kWh</p>
                 </div>
 
-                <div class="bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 p-4 rounded-xl border border-emerald-400/30 animate-slideInUp">
-                    <h3 class="text-emerald-200 font-semibold mb-1">Lowest Consumer</h3>
-                    <p class="text-lg font-bold text-white">${minEnergyAppliance.name}</p>
-                    <p class="text-emerald-300">${minEnergyAppliance.energy.toFixed(2)} kWh</p>
+                <div class="bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 p-3 sm:p-4 rounded-xl border border-emerald-400/30">
+                    <h3 class="text-emerald-200 font-semibold text-xs sm:text-sm mb-1">Lowest Consumer</h3>
+                    <p class="text-base sm:text-lg font-bold text-white">${minEnergyAppliance.name}</p>
+                    <p class="text-emerald-300 text-xs sm:text-sm">${minEnergyAppliance.energy.toFixed(2)} kWh</p>
                 </div>
             </div>
         `;
@@ -374,7 +426,7 @@ function updateChart(maxApp, minApp) {
                 data: energies,
                 backgroundColor: colors,
                 borderColor: borderColors,
-                borderWidth: 2
+                borderWidth: window.innerWidth < 768 ? 1 : 2
             }]
         },
         options: {
@@ -382,12 +434,12 @@ function updateChart(maxApp, minApp) {
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    display: true,
+                    display: window.innerWidth >= 640,
                     position: 'top',
                     labels: {
                         color: '#ffffff',
                         font: {
-                            size: 12
+                            size: window.innerWidth < 640 ? 10 : 12
                         }
                     }
                 },
@@ -397,7 +449,7 @@ function updateChart(maxApp, minApp) {
                     bodyColor: '#F8FAFC',
                     borderColor: '#3B82F6',
                     borderWidth: 1,
-                    padding: 12,
+                    padding: window.innerWidth < 640 ? 8 : 12,
                     cornerRadius: 8,
                     displayColors: false,
                     callbacks: {
@@ -411,18 +463,18 @@ function updateChart(maxApp, minApp) {
                 y: {
                     beginAtZero: true,
                     title: {
-                        display: true,
+                        display: window.innerWidth >= 640,
                         text: 'Energy Consumption (kWh)',
                         color: '#ffffff',
                         font: {
-                            size: 12,
+                            size: window.innerWidth < 640 ? 10 : 12,
                             weight: 'bold'
                         }
                     },
                     ticks: {
                         color: '#ffffff',
                         font: {
-                            size: 11
+                            size: window.innerWidth < 640 ? 9 : 11
                         }
                     },
                     grid: {
@@ -431,19 +483,21 @@ function updateChart(maxApp, minApp) {
                 },
                 x: {
                     title: {
-                        display: true,
+                        display: window.innerWidth >= 640,
                         text: 'Appliances',
                         color: '#ffffff',
                         font: {
-                            size: 12,
+                            size: window.innerWidth < 640 ? 10 : 12,
                             weight: 'bold'
                         }
                     },
                     ticks: {
                         color: '#ffffff',
                         font: {
-                            size: 11
-                        }
+                            size: window.innerWidth < 640 ? 9 : 11
+                        },
+                        maxRotation: 45,
+                        minRotation: 0
                     },
                     grid: {
                         color: 'rgba(255, 255, 255, 0.1)'
@@ -476,9 +530,9 @@ function clearAll() {
             const summaryDiv = document.getElementById('summary-results');
             if (summaryDiv) {
                 summaryDiv.innerHTML = `
-                    <div class="text-center py-12 text-blue-200 animate-fadeIn">
-                        <i class="fas fa-network-wired text-4xl mb-4"></i>
-                        <p>Add appliances and click "Analyze" to see comprehensive energy insights</p>
+                    <div class="text-center py-6 sm:py-12 text-blue-200">
+                        <i class="fas fa-network-wired text-xl sm:text-4xl mb-2 sm:mb-4"></i>
+                        <p class="text-xs sm:text-base">Add appliances and click "Analyze" to see comprehensive energy insights</p>
                     </div>
                 `;
             }

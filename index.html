@@ -6,115 +6,662 @@
     <title>Professional Home Load Analyzer</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            backdropBlur: {
-              'xs': '2px',
-            }
-          }
-        }
-      }
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
-    <style type="text/tailwindcss">
-      @layer base {
-        body {
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-        }
-      }
-    </style>
     <style>
-      body {
-        margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-          sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        overflow-x: hidden;
-      }
-
-      #root {
-        min-height: 100vh;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      /* Custom scrollbar for webkit browsers */
-      ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-      }
-
-      ::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 4px;
-      }
-
-      ::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-        border-radius: 4px;
-      }
-
-      ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(135deg, #2563eb, #7c3aed);
-      }
-
-      /* Animation keyframes */
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%);
+            min-height: 100vh;
         }
-        to {
-          opacity: 1;
-        }
-      }
 
-      @keyframes slideInLeft {
-        from {
-          transform: translateX(-50px);
-          opacity: 0;
+        * {
+            box-sizing: border-box;
         }
-        to {
-          transform: translateX(0);
-          opacity: 1;
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
         }
-      }
 
-      @keyframes slideInRight {
-        from {
-          transform: translateX(50px);
-          opacity: 0;
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
         }
-        to {
-          transform: translateX(0);
-          opacity: 1;
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 4px;
         }
-      }
 
-      .fade-in {
-        animation: fadeIn 0.5s ease-out;
-      }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+        }
 
-      .slide-in-left {
-        animation: slideInLeft 0.5s ease-out;
-      }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 215, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            position: relative;
+        }
 
-      .slide-in-right {
-        animation: slideInRight 0.5s ease-out;
-      }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ffeb3b, #ff9800, #f44336, #9c27b0, #3f51b5);
+            background-size: 300% 100%;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 2.5rem 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        header::before {
+            content: '⚡';
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 2rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            animation: fadeInUp 0.8s ease-out;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #ffeb3b, #ff9800, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out;
+            color: #e3f2fd;
+        }
+
+        main {
+            padding: 2.5rem 3rem;
+        }
+
+        .input-section, .appliances-list, .results-section {
+            margin-bottom: 2.5rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(245, 245, 245, 0.08) 100%);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideIn 0.6s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .input-section:hover, .appliances-list:hover, .results-section:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .input-section h2, .appliances-list h2, .results-section h2 {
+            color: #e2e8f0;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            font-weight: 700;
+            position: relative;
+            display: inline-block;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-section h2::after, .appliances-list h2::after, .results-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #ffeb3b, #ff9800);
+            border-radius: 2px;
+            box-shadow: 0 2px 10px rgba(255, 235, 59, 0.4);
+        }
+
+        .form-group {
+            margin-bottom: 1.8rem;
+            animation: fadeIn 0.5s ease-out;
+            position: relative;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 1.8rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            font-size: 1.05rem;
+            letter-spacing: 0.3px;
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+            position: relative;
+        }
+
+        label::after {
+            content: '*';
+            color: #f44336;
+            margin-left: 2px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 1.2rem 1.5rem;
+            border: 2px solid #475569;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: #f8fafc;
+            border: 2px solid #334155;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #ff9800;
+            box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.2), inset 0 2px 8px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #4338ca 0%, #0f172a 100%);
+            transform: translateY(-2px);
+        }
+
+        .btn {
+            padding: 1.2rem 2rem;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-right: 1rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-family: inherit;
+            color: white;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0));
+            z-index: -1;
+            transition: opacity 0.4s ease;
+            border-radius: 15px;
+        }
+
+        .btn:hover::before {
+            opacity: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #f57c00 0%, #ef6c00 100%);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(255, 152, 0, 0.6);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #219653 0%, #196441 100%);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(39, 174, 96, 0.6);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(231, 76, 60, 0.6);
+        }
+
+        .controls {
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: flex-start;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+            animation: slideIn 0.7s ease-out;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 15px;
+            border: 2px solid #475569;
+            animation: fadeIn 0.8s ease-out;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+
+        th, td {
+            padding: 1.3rem 1.5rem;
+            text-align: left;
+            border-bottom: 2px solid #334155;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            color: #f8fafc;
+        }
+
+        th {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            color: white;
+            font-weight: 700;
+            position: sticky;
+            top: 0;
+            text-transform: uppercase;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            border: none;
+        }
+
+        tr:nth-child(even) {
+            background: linear-gradient(90deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.6));
+        }
+
+        tr:hover {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+            transform: scale(1.02);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+            color: #0f172a;
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 3px 10px rgba(220, 38, 38, 0.3);
+        }
+
+        .delete-btn:hover {
+            background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 15px rgba(220, 38, 38, 0.5);
+        }
+
+        #summary-results {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 2.5rem;
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2), 0 8px 25px rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            animation: slideIn 0.9s ease-out;
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+
+        #summary-results::before {
+            content: '⚡';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 3rem;
+            opacity: 0.05;
+            color: #ff9800;
+            z-index: 0;
+        }
+
+        .placeholder {
+            text-align: center;
+            color: #94a3b8;
+            font-style: italic;
+            padding: 4rem;
+            font-size: 1.3rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .summary-item {
+            margin-bottom: 1.3rem;
+            padding: 1rem 1.5rem;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            animation: fadeIn 0.4s ease-out;
+            animation-fill-mode: both;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-label {
+            font-weight: 700;
+            color: #e2e8f0;
+            display: inline-block;
+            width: 250px;
+            font-size: 1.1rem;
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+        }
+
+        .summary-value {
+            font-weight: 700;
+            color: #fbbf24;
+            font-size: 1.3rem;
+            letter-spacing: 0.5px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(45deg, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .chart-container {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            height: 500px;
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            animation: slideIn 1s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ffeb3b, #ff9800, #f44336);
+            background-size: 200% 100%;
+            animation: chartGlow 2s ease infinite;
+        }
+
+        @keyframes chartGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        #energy-chart {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 0;
+                border-radius: 15px;
+            }
+
+            main {
+                padding: 1.5rem;
+            }
+
+            header {
+                padding: 2rem 1.5rem 1.5rem;
+            }
+
+            header h1 {
+                font-size: 2.2rem;
+            }
+
+            header::before {
+                font-size: 1.5rem;
+                top: 15px;
+                right: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                justify-content: center;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn {
+                margin-right: 0;
+                margin-bottom: 1rem;
+                width: 100%;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            th, td {
+                padding: 1rem 0.7rem;
+            }
+
+            .summary-label {
+                width: 180px;
+                font-size: 1rem;
+            }
+
+            .summary-value {
+                font-size: 1.1rem;
+            }
+
+            .chart-container {
+                height: 400px;
+                padding: 1.5rem;
+            }
+
+            .input-section, .appliances-list, .results-section {
+                padding: 1.8rem;
+            }
+
+            .input-section h2, .appliances-list h2, .results-section h2 {
+                font-size: 1.6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            header {
+                padding: 1.5rem 1rem;
+            }
+
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            main {
+                padding: 1rem;
+            }
+
+            .input-section h2, .appliances-list h2, .results-section h2 {
+                font-size: 1.4rem;
+            }
+
+            .chart-container {
+                height: 350px;
+            }
+
+            .summary-label {
+                width: 140px;
+                font-size: 0.9rem;
+            }
+
+            .summary-value {
+                font-size: 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+        }
+
+        .error-message {
+            color: #f87171;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .success-message {
+            color: #4ade80;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
     </style>
 </head>
 <body class="bg-gray-900 m-0 p-0">
     <div id="root" class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
         <div class="container mx-auto px-4 py-8">
-            <!-- Header -->
-            <div id="header-animation-target" class="text-center mb-12">
+            <header>
                 <h1 class="text-5xl font-bold text-white mb-4 flex items-center justify-center gap-3">
                     <i class="fas fa-bolt text-yellow-400 text-4xl"></i>
                     Professional Home Load Analyzer
@@ -122,173 +669,588 @@
                 <p class="text-xl text-blue-200">
                     Advanced Energy Consumption Analysis & Management System
                 </p>
-            </div>
+            </header>
 
-            <div class="grid lg:grid-cols-2 gap-8">
-                <!-- Left Column - Input and List -->
-                <div class="space-y-8">
-                    <!-- Input Section -->
-                    <div id="input-section-animation-target" class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 shadow-2xl">
-                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                            <i class="fas fa-plug text-yellow-400"></i>
-                            Add New Appliance
-                        </h2>
-
-                        <form id="appliance-form" class="space-y-6">
-                            <div class="grid md:grid-cols-2 gap-6">
-                                <div class="space-y-2">
-                                    <label class="flex items-center gap-2 text-sm font-semibold text-blue-200">
-                                        <i class="fas fa-tag text-yellow-400"></i>
-                                        Appliance Name
-                                    </label>
-                                    <input
-                                        id="appliance-name"
-                                        type="text"
-                                        placeholder="e.g., Energy Efficient Refrigerator"
-                                        class="w-full px-4 py-3 rounded-xl border-2 border-blue-200 focus:border-yellow-400 focus:outline-none transition-all duration-200 bg-white/90 text-gray-800"
-                                        required
-                                    />
-                                </div>
-
-                                <div class="space-y-2">
-                                    <label class="flex items-center gap-2 text-sm font-semibold text-blue-200">
-                                        <i class="fas fa-battery-full text-yellow-400"></i>
-                                        Power Rating (Watts)
-                                    </label>
-                                    <input
-                                        id="power-rating"
-                                        type="number"
-                                        placeholder="e.g., 150"
-                                        min="1"
-                                        step="any"
-                                        class="w-full px-4 py-3 rounded-xl border-2 border-blue-200 focus:border-yellow-400 focus:outline-none transition-all duration-200 bg-white/90 text-gray-800"
-                                        required
-                                    />
-                                </div>
-
-                                <div class="space-y-2">
-                                    <label class="flex items-center gap-2 text-sm font-semibold text-blue-200">
-                                        <i class="fas fa-layer-group text-yellow-400"></i>
-                                        Quantity
-                                    </label>
-                                    <input
-                                        id="quantity"
-                                        type="number"
-                                        placeholder="e.g., 1"
-                                        min="1"
-                                        step="any"
-                                        class="w-full px-4 py-3 rounded-xl border-2 border-blue-200 focus:border-yellow-400 focus:outline-none transition-all duration-200 bg-white/90 text-gray-800"
-                                        required
-                                    />
-                                </div>
-
-                                <div class="space-y-2">
-                                    <label class="flex items-center gap-2 text-sm font-semibold text-blue-200">
-                                        <i class="fas fa-clock text-yellow-400"></i>
-                                        Daily Usage (Hours)
-                                    </label>
-                                    <input
-                                        id="daily-usage"
-                                        type="number"
-                                        placeholder="e.g., 24"
-                                        min="0.1"
-                                        max="24"
-                                        step="any"
-                                        class="w-full px-4 py-3 rounded-xl border-2 border-blue-200 focus:border-yellow-400 focus:outline-none transition-all duration-200 bg-white/90 text-gray-800"
-                                        required
-                                    />
-                                </div>
-                            </div>
-
-                            <button
-                                type="submit"
-                                class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg"
-                            >
-                                <i class="fas fa-plus-circle"></i>
-                                Add Appliance
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- Appliances List -->
-                    <div id="list-section-animation-target" class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 shadow-2xl">
-                        <div class="flex items-center justify-between mb-6">
-                            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
-                                <i class="fas fa-list-check text-green-400"></i>
-                                Energy Load Inventory
+            <main class="mt-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Left Column - Input and Appliances List -->
+                    <div class="space-y-8">
+                        <!-- Input Section -->
+                        <section class="input-section">
+                            <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                                <i class="fas fa-plug text-yellow-400"></i>
+                                Add New Appliance
                             </h2>
-                            <div class="flex gap-3">
+
+                            <form id="appliance-form" class="space-y-6">
+                                <div class="form-row">
+                                    <div class="space-y-2">
+                                        <label class="flex items-center gap-2 text-sm font-semibold text-blue-200">
+                                            <i class="fas fa-tag text-yellow-400"></i>
+                                            Appliance Name *
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="appliance-name"
+                                            placeholder="e.g., Energy Efficient Refrigerator"
+                                            class="w-full px-4 py-3 rounded-xl border-2 border-blue-200 focus:border-yellow-400 focus:outline-none transition-all duration-200 bg-white/90 text-gray-800"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div class="space-y-2">
+                                        <label class="flex items-center gap-2 text-sm font-semibold text-blue-200">
+                                            <i class="fas fa-battery-full text-yellow-400"></i>
+                                            Power Rating (Watts) *
+                                        </label>
+                                        <input
+                                            type="number"
+                                            id="power-rating"
+                                            placeholder="e.g., 150"
+                                            min="1"
+                                            step="any"
+                                            class="w-full px-4 py-3 rounded-xl border-2 border-blue-200 focus:border-yellow-400 focus:outline-none transition-all duration-200 bg-white/90 text-gray-800"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div class="space-y-2">
+                                        <label class="flex items-center gap-2 text-sm font-semibold text-blue-200">
+                                            <i class="fas fa-layer-group text-yellow-400"></i>
+                                            Quantity *
+                                        </label>
+                                        <input
+                                            type="number"
+                                            id="quantity"
+                                            placeholder="e.g., 1"
+                                            min="1"
+                                            step="any"
+                                            class="w-full px-4 py-3 rounded-xl border-2 border-blue-200 focus:border-yellow-400 focus:outline-none transition-all duration-200 bg-white/90 text-gray-800"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div class="space-y-2">
+                                        <label class="flex items-center gap-2 text-sm font-semibold text-blue-200">
+                                            <i class="fas fa-clock text-yellow-400"></i>
+                                            Daily Usage (Hours) *
+                                        </label>
+                                        <input
+                                            type="number"
+                                            id="daily-usage"
+                                            placeholder="e.g., 24"
+                                            min="0.1"
+                                            max="24"
+                                            step="any"
+                                            class="w-full px-4 py-3 rounded-xl border-2 border-blue-200 focus:border-yellow-400 focus:outline-none transition-all duration-200 bg-white/90 text-gray-800"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
                                 <button
-                                    id="finish-analyze"
-                                    class="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-200 flex items-center gap-2 shadow-lg"
+                                    type="submit"
+                                    class="btn btn-primary w-full flex items-center justify-center gap-2"
                                 >
-                                    <i class="fas fa-chart-line"></i>
-                                    Analyze
+                                    <i class="fas fa-plus-circle"></i>
+                                    Add Appliance
                                 </button>
-                                <button
-                                    id="clear-all"
-                                    class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-200 flex items-center gap-2 shadow-lg"
-                                >
-                                    <i class="fas fa-trash-alt"></i>
-                                    Clear
-                                </button>
+                            </form>
+                        </section>
+
+                        <!-- Appliances List -->
+                        <section class="appliances-list">
+                            <div class="flex justify-between items-center mb-6">
+                                <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                                    <i class="fas fa-list-check text-green-400"></i>
+                                    Energy Load Inventory
+                                </h2>
+                                <div class="flex gap-3">
+                                    <button id="finish-analyze" class="btn btn-secondary flex items-center gap-2">
+                                        <i class="fas fa-chart-line"></i>
+                                        Analyze
+                                    </button>
+                                    <button id="clear-all" class="btn btn-danger flex items-center gap-2">
+                                        <i class="fas fa-trash-alt"></i>
+                                        Clear
+                                    </button>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-white">
-                                <thead>
-                                    <tr class="border-b border-white/20">
-                                        <th class="text-left py-3 px-4">Appliance</th>
-                                        <th class="text-left py-3 px-4">Power (W)</th>
-                                        <th class="text-left py-3 px-4">Qty</th>
-                                        <th class="text-left py-3 px-4">Hours</th>
-                                        <th class="text-left py-3 px-4">Energy (kWh)</th>
-                                        <th class="text-left py-3 px-4">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="appliances-body">
-                                    <!-- Appliances will be added here dynamically -->
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div id="no-appliances-placeholder" class="text-center py-12 text-blue-200">
-                            <i class="fas fa-list-check text-4xl mb-4"></i>
-                            <p>No appliances added yet</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Column - Results and Chart -->
-                <div class="space-y-8">
-                    <!-- Results Section -->
-                    <div id="results-section-animation-target" class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 shadow-2xl">
-                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                            <i class="fas fa-chart-bar text-purple-400"></i>
-                            Energy Analysis Dashboard
-                        </h2>
-
-                        <div id="summary-results">
-                            <div class="text-center py-12 text-blue-200">
-                                <i class="fas fa-network-wired text-4xl mb-4"></i>
-                                <p>Add appliances and click "Analyze" to see comprehensive energy insights</p>
+                            <div class="table-container">
+                                <table class="w-full text-white">
+                                    <thead>
+                                        <tr class="border-b border-white/20">
+                                            <th class="text-left py-3 px-4">Appliance</th>
+                                            <th class="text-left py-3 px-4">Power (W)</th>
+                                            <th class="text-left py-3 px-4">Qty</th>
+                                            <th class="text-left py-3 px-4">Hours</th>
+                                            <th class="text-left py-3 px-4">Energy (kWh)</th>
+                                            <th class="text-left py-3 px-4">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="appliances-body">
+                                        <!-- Appliances will be added here dynamically -->
+                                    </tbody>
+                                </table>
                             </div>
-                        </div>
+
+                            <div id="no-appliances-placeholder" class="text-center py-12 text-blue-200">
+                                <i class="fas fa-list-check text-4xl mb-4"></i>
+                                <p>No appliances added yet</p>
+                            </div>
+                        </section>
                     </div>
 
-                    <!-- Chart Section -->
-                    <div id="chart-section-animation-target" class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 shadow-2xl">
-                        <h3 class="text-xl font-bold text-white mb-6">Energy Consumption Overview</h3>
-                        <div class="h-80">
+                    <!-- Right Column - Results and Chart -->
+                    <div class="space-y-8">
+                        <!-- Results Section -->
+                        <section class="results-section">
+                            <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                                <i class="fas fa-chart-bar text-purple-400"></i>
+                                Energy Analysis Dashboard
+                            </h2>
+
+                            <div id="summary-results">
+                                <div class="text-center py-12 text-blue-200">
+                                    <i class="fas fa-network-wired text-4xl mb-4"></i>
+                                    <p>Add appliances and click "Analyze" to see comprehensive energy insights</p>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Chart Section -->
+                        <div class="chart-container">
+                            <h3 class="text-xl font-bold text-white mb-6 text-center">Energy Consumption Overview</h3>
                             <canvas id="energy-chart"></canvas>
                         </div>
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // Global variables
+        let appliances = [];
+        let chart = null;
+
+        // DOM elements
+        const applianceForm = document.getElementById('appliance-form');
+        const appliancesBody = document.getElementById('appliances-body');
+        const noAppliancesPlaceholder = document.getElementById('no-appliances-placeholder');
+        const summaryResults = document.getElementById('summary-results');
+        const finishAnalyzeBtn = document.getElementById('finish-analyze');
+        const clearAllBtn = document.getElementById('clear-all');
+
+        // Initialize event listeners
+        function initializeEventListeners() {
+            applianceForm.addEventListener('submit', addAppliance);
+            finishAnalyzeBtn.addEventListener('click', analyzeData);
+            clearAllBtn.addEventListener('click', clearAll);
+
+            // Add Enter key navigation for form fields
+            const formInputs = applianceForm.querySelectorAll('input');
+            formInputs.forEach((input, index) => {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (index < formInputs.length - 1) {
+                            formInputs[index + 1].focus();
+                        } else {
+                            addAppliance(e);
+                        }
+                    }
+                });
+            });
+        }
+
+        // Validate input
+        function validateInput(name, power, quantity, hours) {
+            const errors = [];
+
+            if (!name.trim()) {
+                errors.push("Appliance name cannot be empty");
+            } else if (name.trim().length > 50) {
+                errors.push("Appliance name is too long (max 50 characters)");
+            }
+
+            if (!power || parseFloat(power) <= 0) {
+                errors.push("Power rating must be a positive number");
+            }
+
+            if (!quantity || parseFloat(quantity) <= 0) {
+                errors.push("Quantity must be a positive number");
+            }
+
+            if (!hours || parseFloat(hours) <= 0) {
+                errors.push("Daily usage must be a positive number");
+            } else if (parseFloat(hours) > 24) {
+                errors.push("Daily usage cannot exceed 24 hours");
+            }
+
+            return errors;
+        }
+
+        // Add appliance
+        function addAppliance(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('appliance-name').value.trim();
+            const power = document.getElementById('power-rating').value;
+            const quantity = document.getElementById('quantity').value;
+            const hours = document.getElementById('daily-usage').value;
+
+            // Validate inputs
+            const errors = validateInput(name, power, quantity, hours);
+
+            if (errors.length > 0) {
+                alert(errors.join('\n'));
+                return;
+            }
+
+            // Calculate energy consumption (kWh/day)
+            const energy = ((parseFloat(power) / 1000) * parseFloat(hours)) * parseFloat(quantity);
+
+            // Create appliance object
+            const appliance = {
+                id: Date.now(),
+                name: name,
+                power: parseFloat(power),
+                quantity: parseFloat(quantity),
+                hours: parseFloat(hours),
+                energy: energy
+            };
+
+            // Add to list
+            appliances.push(appliance);
+
+            // Update table
+            updateAppliancesTable();
+
+            // Show success message
+            showNotification(`"${name}" added successfully!`, 'success');
+
+            // Reset form
+            applianceForm.reset();
+
+            // Focus first field
+            setTimeout(() => {
+                document.getElementById('appliance-name').focus();
+            }, 100);
+        }
+
+        // Update appliances table
+        function updateAppliancesTable() {
+            // Clear existing content
+            appliancesBody.innerHTML = '';
+
+            // Show/hide placeholder
+            if (appliances.length > 0) {
+                noAppliancesPlaceholder.style.display = 'none';
+            } else {
+                noAppliancesPlaceholder.style.display = 'block';
+            }
+
+            // Add appliances to table with animations
+            appliances.forEach((appliance, index) => {
+                const row = document.createElement('tr');
+                row.style.opacity = '0';
+                row.style.transform = 'translateX(-20px)';
+
+                row.innerHTML = `
+                    <td class="py-3 px-4">${appliance.name}</td>
+                    <td class="py-3 px-4">${appliance.power}</td>
+                    <td class="py-3 px-4">${appliance.quantity}</td>
+                    <td class="py-3 px-4">${appliance.hours}</td>
+                    <td class="py-3 px-4 font-bold text-yellow-400">${appliance.energy.toFixed(2)}</td>
+                    <td class="py-3 px-4">
+                        <button class="delete-btn" onclick="deleteAppliance(${appliance.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+
+                appliancesBody.appendChild(row);
+
+                // Trigger animation
+                setTimeout(() => {
+                    row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    row.style.opacity = '1';
+                    row.style.transform = 'translateX(0)';
+                }, 10 + (index * 50)); // Stagger animations
+            });
+        }
+
+        // Delete appliance
+        function deleteAppliance(id) {
+            const appliance = appliances.find(a => a.id === id);
+            if (appliance) {
+                appliances = appliances.filter(a => a.id !== id);
+                updateAppliancesTable();
+                showNotification(`"${appliance.name}" deleted successfully!`, 'success');
+            }
+        }
+
+        // Analyze data
+        function analyzeData() {
+            if (appliances.length === 0) {
+                alert("Please add at least one appliance before analyzing.");
+                return;
+            }
+
+            // Calculate statistics
+            const totalEnergy = appliances.reduce((sum, app) => sum + app.energy, 0);
+            const maxEnergyAppliance = appliances.reduce((max, app) => app.energy > max.energy ? app : max);
+            const minEnergyAppliance = appliances.reduce((min, app) => app.energy < min.energy ? app : min);
+            const avgEnergy = totalEnergy / appliances.length;
+
+            // Show loading effect
+            summaryResults.innerHTML = `
+                <div class="text-center py-12 text-blue-200">
+                    <i class="fas fa-spinner fa-spin text-2xl mb-4"></i>
+                    <p>Analyzing energy data...</p>
+                </div>
+            `;
+
+            // Delay for animation
+            setTimeout(() => {
+                // Update summary
+                updateSummary(totalEnergy, maxEnergyAppliance, minEnergyAppliance, avgEnergy);
+
+                // Update chart
+                updateChart(maxEnergyAppliance, minEnergyAppliance);
+            }, 800);
+        }
+
+        // Update summary
+        function updateSummary(totalEnergy, maxEnergyAppliance, minEnergyAppliance, avgEnergy) {
+            summaryResults.innerHTML = `
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-gradient-to-r from-blue-500/20 to-blue-600/20 p-4 rounded-xl border border-blue-400/30">
+                            <h3 class="text-blue-200 font-semibold mb-1">Total Energy</h3>
+                            <p class="text-2xl font-bold text-white">${totalEnergy.toFixed(2)} kWh</p>
+                        </div>
+                        <div class="bg-gradient-to-r from-green-500/20 to-green-600/20 p-4 rounded-xl border border-green-400/30">
+                            <h3 class="text-green-200 font-semibold mb-1">Avg Energy</h3>
+                            <p class="text-2xl font-bold text-white">${avgEnergy.toFixed(2)} kWh</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-red-500/20 to-red-600/20 p-4 rounded-xl border border-red-400/30">
+                        <h3 class="text-red-200 font-semibold mb-1">Highest Consumer</h3>
+                        <p class="text-lg font-bold text-white">${maxEnergyAppliance.name}</p>
+                        <p class="text-red-300">${maxEnergyAppliance.energy.toFixed(2)} kWh</p>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 p-4 rounded-xl border border-emerald-400/30">
+                        <h3 class="text-emerald-200 font-semibold mb-1">Lowest Consumer</h3>
+                        <p class="text-lg font-bold text-white">${minEnergyAppliance.name}</p>
+                        <p class="text-emerald-300">${minEnergyAppliance.energy.toFixed(2)} kWh</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update chart
+        function updateChart(maxApp, minApp) {
+            const ctx = document.getElementById('energy-chart').getContext('2d');
+
+            // Destroy existing chart if it exists
+            if (chart) {
+                chart.destroy();
+            }
+
+            const names = appliances.map(app => app.name);
+            const energies = appliances.map(app => app.energy);
+
+            // Create colors: highlight max and min
+            const colors = appliances.map(app => {
+                if (app.id === maxApp.id) {
+                    return '#EF4444'; // Red for max
+                } else if (app.id === minApp.id) {
+                    return '#10B981'; // Green for min
+                } else {
+                    return '#3B82F6'; // Blue for others
+                }
+            });
+
+            const borderColors = appliances.map(app => {
+                if (app.id === maxApp.id) {
+                    return '#DC2626';
+                } else if (app.id === minApp.id) {
+                    return '#059669';
+                } else {
+                    return '#2563EB';
+                }
+            });
+
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: names,
+                    datasets: [{
+                        label: 'Energy Consumption (kWh/day)',
+                        data: energies,
+                        backgroundColor: colors,
+                        borderColor: borderColors,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                color: '#ffffff',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                            titleColor: '#F8FAFC',
+                            bodyColor: '#F8FAFC',
+                            borderColor: '#3B82F6',
+                            borderWidth: 1,
+                            padding: 12,
+                            cornerRadius: 8,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.parsed.y.toFixed(2)} kWh/day`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Energy Consumption (kWh)',
+                                color: '#ffffff',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            },
+                            ticks: {
+                                color: '#ffffff',
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Appliances',
+                                color: '#ffffff',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            },
+                            ticks: {
+                                color: '#ffffff',
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+        }
+
+        // Clear all appliances
+        function clearAll() {
+            if (confirm("Are you sure you want to clear all appliances?")) {
+                appliances = [];
+                updateAppliancesTable();
+
+                // Clear summary
+                summaryResults.innerHTML = `
+                    <div class="text-center py-12 text-blue-200">
+                        <i class="fas fa-network-wired text-4xl mb-4"></i>
+                        <p>Add appliances and click "Analyze" to see comprehensive energy insights</p>
+                    </div>
+                `;
+
+                // Clear chart
+                if (chart) {
+                    chart.destroy();
+                    chart = null;
+                }
+
+                showNotification("All appliances cleared successfully!", 'success');
+            }
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            // Remove any existing notifications
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(note => note.remove());
+
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 max-w-md ${
+                type === 'error' ? 'bg-red-500 text-white' :
+                type === 'success' ? 'bg-green-500 text-white' :
+                'bg-blue-500 text-white'
+            }`;
+            notification.textContent = message;
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100px)';
+            notification.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+
+            document.body.appendChild(notification);
+
+            // Trigger animation
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 10);
+
+            // Remove after delay
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100px)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEventListeners();
+
+            // Focus first field
+            document.getElementById('appliance-name').focus();
+        });
+
+        // Make deleteAppliance available globally
+        window.deleteAppliance = deleteAppliance;
+    </script>
 </body>
 </html>
